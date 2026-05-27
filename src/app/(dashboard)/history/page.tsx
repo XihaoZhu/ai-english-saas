@@ -24,7 +24,7 @@ const sessions = [
 
 export default function HistoryPage() {
   return (
-    <main className="min-h-screen bg-[color:var(--app-bg)] px-6 py-8 text-[color:var(--app-text)]">
+    <main className="bg-[color:var(--app-bg)] px-6 py-8 text-[color:var(--app-text)]">
       <div className="mx-auto max-w-6xl space-y-8">
         <section className="rounded-[2rem] border border-[color:var(--app-border)] bg-[color:var(--app-surface)] p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
           <div className="space-y-2">

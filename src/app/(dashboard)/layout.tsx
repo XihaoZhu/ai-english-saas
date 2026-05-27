@@ -1,5 +1,8 @@
+'use client';
+
 import Link from "next/link";
 import { ReactNode } from "react";
+import { usePathname } from "next/navigation";
 
 const navItems = [
     {
@@ -25,6 +28,8 @@ export default function DashboardLayout({
 }: {
     children: ReactNode;
 }) {
+    const pathname = usePathname();
+
     return (
         <div className="flex min-h-screen bg-[color:var(--app-bg)] text-[color:var(--app-text)]">
             {/* Sidebar */}
@@ -44,7 +49,13 @@ export default function DashboardLayout({
                         <Link
                             key={item.href}
                             href={item.href}
-                            className="block rounded-xl px-4 py-3 text-[color:var(--app-muted)] transition hover:bg-[color:var(--app-accent-soft)] hover:text-[color:var(--app-text)]"
+                            className={`
+                    block rounded-xl px-4 py-3 transition
+                    ${pathname === item.href
+                                    ? "bg-[color:var(--app-accent-soft)] text-[color:var(--app-text)]"
+                                    : "text-[color:var(--app-muted)] hover:bg-[color:var(--app-accent-soft)] hover:text-[color:var(--app-text)]"
+                                }
+                `}
                         >
                             {item.label}
                         </Link>
@@ -68,7 +79,7 @@ export default function DashboardLayout({
                 </header>
 
                 {/* Page */}
-                <main className="p-6">{children}</main>
+                <div className="p-6">{children}</div>
             </div>
         </div>
     );
