@@ -1,110 +1,133 @@
 "use client";
 
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { lessonSchema, LessonForm } from "@/src/features/learning/schema/lessonSchema";
+import { useGenerateLesson } from "@/src/features/learning/hooks/useGenerateLesson";
 
 export default function LearnPage() {
-  const [result, setResult] = useState<null | {
-    conversation: { role: string; text: string }[];
-    keywords: string[];
-  }>(null);
+  const [result, setResult] = useState<any>(null);
 
-  function handleGenerate() {
-    setResult({
-      conversation: [
-        { role: "ai", text: "Welcome to today's English practice session." },
-        { role: "user", text: "Thank you. I'm ready to begin." },
-      ],
-      keywords: ["appointment", "schedule", "clarify"],
-    });
+  const form = useForm<LessonForm>({
+    resolver: zodResolver(lessonSchema),
+    defaultValues: {
+      scenario: "",
+      profession: "Software Engineer",
+      level: "Beginner",
+    },
+  });
+
+  const mutation = useGenerateLesson();
+
+  async function onSubmit(data: LessonForm) {
+    try {
+      const res = await mutation.mutateAsync(data);
+      setResult(res);
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   return (
-    <main className="bg-[color:var(--app-bg)] px-6 py-8 text-[color:var(--app-text)]">
+    <main className="min-h-screen bg-white text-black dark:bg-zinc-950 dark:text-white p-6">
       <div className="mx-auto max-w-5xl space-y-8">
-        <section className="rounded-[2rem] border border-[color:var(--app-border)] bg-[color:var(--app-surface)] p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
-          <div className="space-y-2">
-            <div className="inline-flex rounded-full bg-[color:var(--app-accent-soft)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--app-accent)]">
-              Practice
-            </div>
-            <h1 className="text-4xl font-bold">AI Learning Session</h1>
-            <p className="text-[color:var(--app-muted)]">
-              Generate personalized English conversation practice.
+
+        {/* Header */}
+        <section>
+          <h1 className="text-4xl font-bold">AI Learning Session</h1>
+          <p className="text-zinc-500 mt-2">
+            Generate structured English practice with AI.
+          </p>
+        </section>
+
+        {/* FORM */}
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 space-y-5"
+        >
+
+          {/* Scenario */}
+          <div>
+            <label className="text-sm">Scenario</label>
+            <input
+              {...form.register("scenario")}
+              className="mt-2 w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-transparent px-4 py-3"
+              placeholder="e.g. Job interview"
+            />
+            <p className="text-red-500 text-sm">
+              {form.formState.errors.scenario?.message}
             </p>
           </div>
-        </section>
 
-        <section className="rounded-[2rem] border border-[color:var(--app-border)] bg-[color:var(--app-surface)] p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
-          <div className="grid gap-5 md:grid-cols-2">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-[color:var(--app-muted)]">
-                Scenario
-              </label>
-              <input
-                placeholder="e.g. Job interview"
-                className="w-full rounded-xl border border-[color:var(--app-border)] bg-[color:var(--app-surface-strong)] px-4 py-3 outline-none transition placeholder:text-slate-400 focus:border-[color:var(--app-accent)]"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-[color:var(--app-muted)]">
-                Profession
-              </label>
-              <select className="w-full rounded-xl border border-[color:var(--app-border)] bg-[color:var(--app-surface-strong)] px-4 py-3 outline-none transition focus:border-[color:var(--app-accent)]">
-                <option>Software Engineer</option>
-                <option>Waiter</option>
-                <option>Customer Service</option>
-              </select>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-[color:var(--app-muted)]">
-                Difficulty Level
-              </label>
-              <select className="w-full rounded-xl border border-[color:var(--app-border)] bg-[color:var(--app-surface-strong)] px-4 py-3 outline-none transition focus:border-[color:var(--app-accent)]">
-                <option>Beginner</option>
-                <option>Intermediate</option>
-                <option>Advanced</option>
-              </select>
-            </div>
+          {/* Profession */}
+          <div>
+            <label className="text-sm">Profession</label>
+            <input
+              {...form.register("profession")}
+              className="mt-2 w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-transparent px-4 py-3"
+            />
           </div>
 
-          <button
-            onClick={handleGenerate}
-            className="mt-6 h-12 rounded-xl bg-[color:var(--app-accent)] px-6 font-medium text-white transition hover:opacity-90"
-          >
-            Generate Session
-          </button>
-        </section>
+          {/* Level */}
+          <div>
+            <label className="text-sm">Level</label>
+            <select
+              {...form.register("level")}
+              className="mt-2 w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-transparent px-4 py-3"
+            >
+              <option>Beginner</option>
+              <option>Intermediate</option>
+              <option>Advanced</option>
+            </select>
+          </div>
 
+          {/* Submit */}
+          <button
+            disabled={mutation.isPending}
+            className="w-full h-12 rounded-xl bg-black text-white dark:bg-white dark:text-black font-medium"
+          >
+            {mutation.isPending ? "Generating..." : "Generate"}
+          </button>
+
+          {/* Error */}
+          {mutation.isError && (
+            <p className="text-red-500">
+              {(mutation.error as Error).message}
+            </p>
+          )}
+        </form>
+
+        {/* RESULT */}
         {result && (
-          <section className="space-y-6 rounded-[2rem] border border-[color:var(--app-border)] bg-[color:var(--app-surface)] p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
-            <div className="space-y-4">
-              <h2 className="text-2xl font-semibold">Conversation</h2>
-              <div className="space-y-3">
-                {result.conversation.map((message, index) => (
-                  <div
-                    key={index}
-                    className="rounded-2xl border border-[color:var(--app-border)] bg-[color:var(--app-surface-strong)] p-4"
-                  >
-                    <p className="mb-2 text-sm uppercase tracking-wide text-[color:var(--app-muted)]">
-                      {message.role}
-                    </p>
-                    <p>{message.text}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
+          <section className="space-y-6">
+            <h2 className="text-2xl font-semibold">Conversation</h2>
 
             <div className="space-y-3">
-              <h2 className="text-2xl font-semibold">Keywords</h2>
-              <div className="flex flex-wrap gap-3">
-                {result.keywords.map((keyword) => (
-                  <div
-                    key={keyword}
-                    className="rounded-full border border-[color:var(--app-border)] bg-[color:var(--app-bg-elevated)] px-4 py-2 text-sm text-[color:var(--app-text)]"
-                  >
-                    {keyword}
+              {result.conversation.map((m: any, i: number) => (
+                <div
+                  key={i}
+                  className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800"
+                >
+                  <div className="text-xs text-zinc-500 uppercase">
+                    {m.role}
                   </div>
+                  <div>{m.text}</div>
+                </div>
+              ))}
+            </div>
+
+            <div>
+              <h3 className="text-xl font-semibold mb-2">Keywords</h3>
+              <div className="flex gap-2 flex-wrap">
+                {result.keywords.map((k: string) => (
+                  <span
+                    key={k}
+                    className="px-3 py-1 rounded-full border border-zinc-300 dark:border-zinc-700"
+                  >
+                    {k}
+                  </span>
                 ))}
               </div>
             </div>

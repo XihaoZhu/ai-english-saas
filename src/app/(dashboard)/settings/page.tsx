@@ -34,6 +34,8 @@ export default function SettingsPage() {
               <input
                 placeholder="30 minutes"
                 className="w-full rounded-xl border border-[color:var(--app-border)] bg-[color:var(--app-surface-strong)] px-4 py-3 outline-none transition placeholder:text-slate-400 focus:border-[color:var(--app-accent)]"
+                type='number'
+                min="0"
               />
             </div>
 
