@@ -1,10 +1,12 @@
+import { Lesson } from "@/src/types/lesson";
+
 type Input = {
     scenario: string;
     level: string;
     profession: string;
 };
 
-export async function generateLesson(input: Input) {
+export async function generateLesson(input: Input): Promise<Lesson> {
 
     await new Promise((res) => setTimeout(res, 500));
 
@@ -14,11 +16,35 @@ export async function generateLesson(input: Input) {
     }
 
     return {
-        conversation: [
-            { role: "ai", text: `Let's practice ${input.scenario}` },
-            { role: "user", text: "Sounds good!" },
-            { role: "ai", text: "Great, I'll guide you step by step." },
+        id: crypto.randomUUID(),
+
+        title: input.scenario,
+
+        scenario: input.scenario,
+        profession: input.profession,
+        level: input.level,
+
+        createdAt: new Date().toISOString(),
+
+        keywords: [
+            "negotiate",
+            "clarify",
+            "schedule",
         ],
-        keywords: ["negotiate", "clarify", "schedule"],
+
+        conversation: [
+            {
+                role: "ai",
+                text: `Let's practice ${input.scenario}`,
+            },
+            {
+                role: "user",
+                text: "Sounds good!",
+            },
+            {
+                role: "ai",
+                text: "Let's begin.",
+            },
+        ],
     };
 }
