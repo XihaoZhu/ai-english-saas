@@ -5,6 +5,7 @@ import { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 
 import { useSignOut } from "@/src/features/auth/hooks/useSignout";
+import { useRouter } from "next/navigation";
 
 const navItems = [
     {
@@ -25,12 +26,25 @@ const navItems = [
     },
 ];
 
-export default async function DashboardLayout({
+export default function DashboardShell({
     children,
 }: {
     children: ReactNode;
 }) {
     const pathname = usePathname();
+    const signOut = useSignOut();
+    const router = useRouter();
+
+    async function onSignOut() {
+        try {
+            await signOut.mutateAsync();
+            router.push("/login");
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+
 
     return (
         <div className="flex min-h-screen bg-[color:var(--app-bg)] text-[color:var(--app-text)]">
@@ -44,6 +58,7 @@ export default async function DashboardLayout({
                     <p className="mt-2 text-sm text-[color:var(--app-muted)]">
                         AI Learning SaaS
                     </p>
+
                 </div>
 
                 <nav className="space-y-2">
@@ -75,7 +90,14 @@ export default async function DashboardLayout({
                         </h2>
                     </div>
 
+
                     <div className="flex items-center gap-3">
+                        <button
+                            onClick={onSignOut}
+                            className="text-sm opacity-70 hover:opacity-100"
+                        >
+                            Log Out
+                        </button>
                         <div className="h-9 w-9 rounded-full bg-gradient-to-br from-sky-400 to-blue-600" />
                     </div>
                 </header>
