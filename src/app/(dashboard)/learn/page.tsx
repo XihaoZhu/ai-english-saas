@@ -3,13 +3,13 @@
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useLessonStore } from "@/src/store/useLessonStore";
 
 import {
   lessonSchema,
   LessonForm,
 } from "@/src/features/learning/schema/lessonSchema";
 
+import { createLesson } from "@/src/features/lessons/actions/createLesson";
 import { useGenerateLesson } from "@/src/features/learning/hooks/useGenerateLesson";
 
 export default function LearnPage() {
@@ -20,83 +20,95 @@ export default function LearnPage() {
   const form = useForm<LessonForm>({
     resolver: zodResolver(lessonSchema),
     defaultValues: {
-      scenario: "",
-      profession: "Software Engineer",
-      level: "Beginner",
+      prompt: "",
+      keywords: "technology, habits",
+      length: "Medium",
+      level: "B1",
     },
   });
 
-  const addLesson =
-    useLessonStore((state) => state.addLesson);
+  async function onGenerate(data: LessonForm) {
+    const lesson = await mutation.mutateAsync(data);
 
-  async function onSubmit(data: LessonForm) {
-    try {
-      const lesson = await mutation.mutateAsync(data);
+    const saved = await createLesson({
+      title: lesson.title,
+      prompt: lesson.prompt,
+      keywords: lesson.keywords,
+      length: lesson.length,
+      level: lesson.level,
+      article: lesson.article,
+      word_count: lesson.word_count,
+      vocabulary: lesson.vocabulary,
+    });
 
-      addLesson(lesson);
-
-      router.push(`/session/${lesson.id}`);
-    } catch (error) {
-      console.error(error);
-    }
+    router.push(`/session/${saved.id}`);
   }
 
   return (
     <main className=" bg-[color:var(--app-bg)] text-[color:var(--app-text)] p-6">
       <div className="mx-auto max-w-3xl">
-        <h1 className="mb-2 text-4xl font-bold">
-          Create Learning Session
-        </h1>
+        <h1 className="mb-2 text-4xl font-bold">Create Reading Material</h1>
 
         <p className="mb-8 opacity-70">
-          Generate a personalized English lesson.
+          Generate a reading passage from your prompt, keyword focus, length, and CEFR level.
         </p>
 
         <form
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={form.handleSubmit(onGenerate)}
           className="space-y-6 rounded-3xl border border-[color:var(--app-border)] p-6"
         >
           <div>
-            <label className="mb-2 block text-sm">
-              Scenario
-            </label>
+            <label className="mb-2 block text-sm">Prompt</label>
 
             <input
-              {...form.register("scenario")}
-              placeholder="e.g. Job Interview"
+              {...form.register("prompt")}
+              placeholder="e.g. A student preparing for a presentation"
               className="w-full rounded-xl border border-[color:var(--app-border)] bg-transparent px-4 py-3"
             />
 
-            {form.formState.errors.scenario && (
+            {form.formState.errors.prompt && (
               <p className="mt-2 text-sm text-red-500">
-                {form.formState.errors.scenario.message}
+                {form.formState.errors.prompt.message}
               </p>
             )}
           </div>
 
           <div>
-            <label className="mb-2 block text-sm">
-              Profession
-            </label>
+            <label className="mb-2 block text-sm">Keywords</label>
 
             <input
-              {...form.register("profession")}
+              {...form.register("keywords")}
+              placeholder="e.g. travel, habits, technology"
               className="w-full rounded-xl border border-[color:var(--app-border)] bg-transparent px-4 py-3"
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-sm">
-              Level
-            </label>
+            <label className="mb-2 block text-sm">Length</label>
+
+            <select
+              {...form.register("length")}
+              className="w-full rounded-xl border border-[color:var(--app-border)] bg-transparent px-4 py-3"
+            >
+              <option value="Short">Short</option>
+              <option value="Medium">Medium</option>
+              <option value="Long">Long</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm">Level</label>
 
             <select
               {...form.register("level")}
               className="w-full rounded-xl border border-[color:var(--app-border)] bg-transparent px-4 py-3"
             >
-              <option value="Beginner">Beginner</option>
-              <option value="Intermediate">Intermediate</option>
-              <option value="Advanced">Advanced</option>
+              <option value="A1">A1</option>
+              <option value="A2">A2</option>
+              <option value="B1">B1</option>
+              <option value="B2">B2</option>
+              <option value="C1">C1</option>
+              <option value="C2">C2</option>
             </select>
           </div>
 

@@ -6,14 +6,16 @@ export default function DashboardPage() {
   const recentSessions = [
     {
       id: 1,
-      scenario: "Job Interview",
-      level: "Intermediate",
+      title: "Job Interview Warm-up",
+      level: "B2",
+      length: "Medium",
       date: "2026-05-20",
     },
     {
       id: 2,
-      scenario: "Restaurant Conversation",
-      level: "Beginner",
+      title: "Restaurant Habits",
+      level: "A2",
+      length: "Short",
       date: "2026-05-18",
     },
   ];
@@ -26,11 +28,9 @@ export default function DashboardPage() {
             <div className="inline-flex rounded-full bg-[color:var(--app-accent-soft)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--app-accent)]">
               Dashboard
             </div>
-            <h1 className="text-4xl font-bold tracking-tight">
-              Welcome back
-            </h1>
+            <h1 className="text-4xl font-bold tracking-tight">Welcome back</h1>
             <p className="max-w-2xl text-[color:var(--app-muted)]">
-              Continue improving your English with AI-powered learning.
+              Continue improving your English with AI-generated reading passages.
             </p>
           </div>
           <ThemeToggle />
@@ -39,19 +39,16 @@ export default function DashboardPage() {
         <section className="rounded-[2rem] border border-[color:var(--app-border)] bg-gradient-to-br from-[color:var(--app-surface-strong)] to-[color:var(--app-surface)] p-8 shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
             <div className="space-y-3">
-              <h2 className="text-2xl font-semibold">
-                Start a new learning session
-              </h2>
+              <h2 className="text-2xl font-semibold">Start a new reading session</h2>
               <p className="max-w-xl text-[color:var(--app-muted)]">
-                Practice realistic English conversations tailored to your
-                profession and difficulty level.
+                Generate a reading passage by prompt, keyword focus, word count, and CEFR level.
               </p>
             </div>
             <a
               href="/learn"
               className="inline-flex h-12 items-center justify-center rounded-xl bg-[color:var(--app-accent)] px-6 font-medium text-white transition hover:opacity-90"
             >
-              Start Learning
+              Start Reading
             </a>
           </div>
         </section>
@@ -74,10 +71,12 @@ export default function DashboardPage() {
                 className="rounded-2xl border border-[color:var(--app-border)] bg-[color:var(--app-surface)] p-5 transition hover:-translate-y-0.5 hover:shadow-lg"
               >
                 <div className="space-y-2">
-                  <h3 className="text-lg font-semibold">{session.scenario}</h3>
+                  <h3 className="text-lg font-semibold">{session.title}</h3>
                   <div className="flex items-center gap-3 text-sm text-[color:var(--app-muted)]">
                     <span>{session.level}</span>
-                    <span>•</span>
+                    <span>·</span>
+                    <span>{session.length}</span>
+                    <span>·</span>
                     <span>{session.date}</span>
                   </div>
                 </div>

@@ -1,19 +1,13 @@
 import SessionView from "./session-view";
+import { getLesson } from "@/src/features/lessons/api/getLesson";
 
-type Props = {
-    params: Promise<{
-        id: string;
-    }>;
-};
-
-export default async function Page({
+export default async function SessionPage({
     params,
-}: Props) {
+}: {
+    params: Promise<{ id: string }>;
+}) {
     const { id } = await params;
+    const lesson = await getLesson(id);
 
-    return (
-        <SessionView
-            lessonId={id}
-        />
-    );
+    return <SessionView lesson={lesson} />;
 }

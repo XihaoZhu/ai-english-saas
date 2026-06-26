@@ -10,6 +10,7 @@ export type ReadingWord = {
 
 export type Lesson = {
     id: string;
+    user_id: string;
     title: string;
     prompt: string;
     keywords: string;
@@ -18,5 +19,5 @@ export type Lesson = {
     article: string;
     word_count: number;
     vocabulary: ReadingWord[];
-    createdAt: string;
+    created_at: string;
 };
