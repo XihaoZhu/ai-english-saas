@@ -20,10 +20,6 @@ const navItems = [
         href: "/history",
         label: "History",
     },
-    {
-        href: "/settings",
-        label: "Settings",
-    },
 ];
 
 export default function DashboardShell({
