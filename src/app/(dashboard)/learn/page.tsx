@@ -21,7 +21,7 @@ export default function LearnPage() {
     resolver: zodResolver(lessonSchema),
     defaultValues: {
       prompt: "",
-      keywords: "technology, habits",
+      keywords: "",
       length: "Medium",
       level: "B1",
     },
@@ -74,11 +74,11 @@ export default function LearnPage() {
           </div>
 
           <div>
-            <label className="mb-2 block text-sm">Keywords</label>
+            <label className="mb-2 block text-sm">Type</label>
 
             <input
               {...form.register("keywords")}
-              placeholder="e.g. travel, habits, technology"
+              placeholder="e.g. story, news, conversation..."
               className="w-full rounded-xl border border-[color:var(--app-border)] bg-transparent px-4 py-3"
             />
           </div>

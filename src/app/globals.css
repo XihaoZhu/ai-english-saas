@@ -11,6 +11,15 @@
   --app-muted: #64748b;
   --app-accent: #2563eb;
   --app-accent-soft: rgba(37, 99, 235, 0.12);
+  --app-tier-core-bg: rgba(16, 185, 129, 0.12);
+  --app-tier-core-text: #047857;
+  --app-tier-core-ring: rgba(110, 231, 183, 0.7);
+  --app-tier-reinforce-bg: rgba(245, 158, 11, 0.14);
+  --app-tier-reinforce-text: #b45309;
+  --app-tier-reinforce-ring: rgba(252, 211, 77, 0.75);
+  --app-tier-next-bg: rgba(239, 68, 68, 0.12);
+  --app-tier-next-text: #b91c1c;
+  --app-tier-next-ring: rgba(252, 165, 165, 0.75);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
@@ -25,6 +34,15 @@
   --app-muted: #94a3b8;
   --app-accent: #7dd3fc;
   --app-accent-soft: rgba(125, 211, 252, 0.14);
+  --app-tier-core-bg: rgba(16, 185, 129, 0.14);
+  --app-tier-core-text: #a7f3d0;
+  --app-tier-core-ring: rgba(52, 211, 153, 0.35);
+  --app-tier-reinforce-bg: rgba(245, 158, 11, 0.16);
+  --app-tier-reinforce-text: #fde68a;
+  --app-tier-reinforce-ring: rgba(251, 191, 36, 0.38);
+  --app-tier-next-bg: rgba(239, 68, 68, 0.16);
+  --app-tier-next-text: #fecaca;
+  --app-tier-next-ring: rgba(248, 113, 113, 0.38);
 }
 
 html,

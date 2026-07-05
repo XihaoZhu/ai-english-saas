@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import ThemeToggle from "@/src/components/ui/ThemeToggle";
 
 export default function DashboardPage() {
@@ -44,24 +45,24 @@ export default function DashboardPage() {
                 Generate a reading passage by prompt, keyword focus, word count, and CEFR level.
               </p>
             </div>
-            <a
+            <Link
               href="/learn"
               className="inline-flex h-12 items-center justify-center rounded-xl bg-[color:var(--app-accent)] px-6 font-medium text-white transition hover:opacity-90"
             >
               Start Reading
-            </a>
+            </Link>
           </div>
         </section>
 
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-semibold">Recent Sessions</h2>
-            <a
+            <Link
               href="/history"
               className="text-sm font-medium text-[color:var(--app-muted)] transition hover:text-[color:var(--app-text)]"
             >
               View all
-            </a>
+            </Link>
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">

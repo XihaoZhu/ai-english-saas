@@ -1,7 +1,22 @@
 import { getLessons } from "@/src/features/lessons/api/getLessons";
+import Link from "next/link";
 
-export default async function HistoryPage() {
-  const lessons = await getLessons();
+const PAGE_SIZE = 5;
+
+export default async function HistoryPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ page?: string }>;
+}) {
+  const params = await searchParams;
+  const currentPage = Math.max(1, Number(params?.page ?? "1") || 1);
+  const { lessons, totalCount } = await getLessons(currentPage, PAGE_SIZE);
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+  const safePage = Math.min(currentPage, totalPages);
+  const showPagination = totalPages > 1;
+
+  const pageLink = (page: number) =>
+    page === 1 ? "/history" : `/history?page=${page}`;
 
   return (
     <main className="bg-[color:var(--app-bg)] px-6 py-8 text-[color:var(--app-text)]">
@@ -39,13 +54,47 @@ export default async function HistoryPage() {
                   </p>
                 </div>
 
-                <button className="h-11 rounded-xl border border-[color:var(--app-border)] bg-[color:var(--app-bg-elevated)] px-5 text-sm font-medium transition hover:border-[color:var(--app-accent)] hover:text-[color:var(--app-accent)]">
+                <Link
+                  href={`/session/${lesson.id}`}
+                  className="inline-flex h-11 items-center rounded-xl border border-[color:var(--app-border)] bg-[color:var(--app-bg-elevated)] px-5 text-sm font-medium transition hover:border-[color:var(--app-accent)] hover:text-[color:var(--app-accent)]"
+                >
                   Review Passage
-                </button>
+                </Link>
               </div>
             </div>
           ))}
         </section>
+
+        {showPagination && (
+          <section className="flex items-center justify-between gap-4 rounded-[1.5rem] border border-[color:var(--app-border)] bg-[color:var(--app-surface)] px-5 py-4">
+            <p className="text-sm text-[color:var(--app-muted)]">
+              Page {safePage} of {totalPages}
+            </p>
+
+            <div className="flex items-center gap-3">
+              <Link
+                href={pageLink(Math.max(1, safePage - 1))}
+                aria-disabled={safePage === 1}
+                className={`inline-flex h-10 items-center rounded-xl border px-4 text-sm font-medium transition ${safePage === 1
+                    ? "pointer-events-none border-[color:var(--app-border)] text-[color:var(--app-muted)] opacity-50"
+                    : "border-[color:var(--app-border)] bg-[color:var(--app-bg-elevated)] hover:border-[color:var(--app-accent)] hover:text-[color:var(--app-accent)]"
+                  }`}
+              >
+                Previous
+              </Link>
+              <Link
+                href={pageLink(Math.min(totalPages, safePage + 1))}
+                aria-disabled={safePage === totalPages}
+                className={`inline-flex h-10 items-center rounded-xl border px-4 text-sm font-medium transition ${safePage === totalPages
+                    ? "pointer-events-none border-[color:var(--app-border)] text-[color:var(--app-muted)] opacity-50"
+                    : "border-[color:var(--app-border)] bg-[color:var(--app-bg-elevated)] hover:border-[color:var(--app-accent)] hover:text-[color:var(--app-accent)]"
+                  }`}
+              >
+                Next
+              </Link>
+            </div>
+          </section>
+        )}
       </div>
     </main>
   );

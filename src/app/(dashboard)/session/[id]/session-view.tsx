@@ -68,9 +68,9 @@ export default function SessionView({
                                 }
 
                                 const tierStyles = {
-                                    core: "bg-emerald-100 text-emerald-700 ring-emerald-200",
-                                    reinforce: "bg-amber-100 text-amber-700 ring-amber-200",
-                                    next: "bg-sky-100 text-sky-700 ring-sky-200",
+                                    core: "bg-[color:var(--app-tier-core-bg)] text-[color:var(--app-tier-core-text)] ring-[color:var(--app-tier-core-ring)]",
+                                    reinforce: "bg-[color:var(--app-tier-reinforce-bg)] text-[color:var(--app-tier-reinforce-text)] ring-[color:var(--app-tier-reinforce-ring)]",
+                                    next: "bg-[color:var(--app-tier-next-bg)] text-[color:var(--app-tier-next-text)] ring-[color:var(--app-tier-next-ring)]",
                                 };
 
                                 return (
@@ -82,7 +82,7 @@ export default function SessionView({
                                     >
                                         <button
                                             type="button"
-                                            className={`rounded-md px-1 py-0.5 text-inherit ring-1 transition hover:-translate-y-0.5 ${tierStyles[word.tier]}`}
+                                            className={`rounded-md px-1 py-0.5 text-inherit ring-1 transition hover:-translate-y-0.5 hover:brightness-95 ${tierStyles[word.tier]}`}
                                         >
                                             {part}
                                         </button>
