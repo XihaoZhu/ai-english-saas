@@ -10,10 +10,6 @@ type Input = {
 export async function generateLesson(input: Input): Promise<Lesson> {
     await new Promise((res) => setTimeout(res, 500));
 
-    if (Math.random() < 0.1) {
-        throw new Error("AI service temporarily unavailable");
-    }
-
     const title = input.prompt.slice(0, 40);
     const article = [
         `The story begins with ${input.prompt.toLowerCase()}.`,
