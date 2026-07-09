@@ -62,7 +62,8 @@ export default function LearnPage() {
 
             <input
               {...form.register("prompt")}
-              placeholder="e.g. A student preparing for a presentation"
+              placeholder="e.g. How to make a good coffee"
+              autoComplete="off"
               className="w-full rounded-xl border border-[color:var(--app-border)] bg-transparent px-4 py-3"
             />
 
@@ -74,11 +75,12 @@ export default function LearnPage() {
           </div>
 
           <div>
-            <label className="mb-2 block text-sm">Type</label>
+            <label className="mb-2 block text-sm">Additional Information</label>
 
             <input
               {...form.register("keywords")}
-              placeholder="e.g. story, news, conversation..."
+              placeholder="e.g. breakdown guidance, I have a semi-automatic coffee machine"
+              autoComplete="off"
               className="w-full rounded-xl border border-[color:var(--app-border)] bg-transparent px-4 py-3"
             />
           </div>
@@ -90,9 +92,9 @@ export default function LearnPage() {
               {...form.register("length")}
               className="w-full rounded-xl border border-[color:var(--app-border)] bg-transparent px-4 py-3"
             >
-              <option value="Short">Short</option>
-              <option value="Medium">Medium</option>
-              <option value="Long">Long</option>
+              <option value="Short">short</option>
+              <option value="Medium">medium</option>
+              <option value="Long">long</option>
             </select>
           </div>
 

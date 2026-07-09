@@ -25,7 +25,7 @@ export default function RegisterPage() {
     try {
       await register.mutateAsync(data);
       router.push("/dashboard");
-    } catch (e) {
+    } catch {
     }
   }
 

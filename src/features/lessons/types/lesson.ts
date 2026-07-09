@@ -8,16 +8,35 @@ export type ReadingWord = {
     explanation: string;
 };
 
-export type Lesson = {
-    id: string;
-    user_id: string;
-    title: string;
+export type LessonLength = "Short" | "Medium" | "Long";
+
+export type LessonLevel = "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
+
+export type LessonDraftInput = {
     prompt: string;
     keywords: string;
-    length: "Short" | "Medium" | "Long";
-    level: "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
+    length: LessonLength;
+    level: LessonLevel;
+};
+
+export type GeneratedLesson = {
+    title: string;
     article: string;
-    word_count: number;
     vocabulary: ReadingWord[];
+};
+
+export type GeneratedLessonResult = LessonDraftInput &
+    GeneratedLesson & {
+    id: string;
+    word_count: number;
+    createdAt: string;
+};
+
+export type LessonRecord = LessonDraftInput & GeneratedLesson & {
+    id: string;
+    word_count: number;
+    user_id: string;
     created_at: string;
 };
+
+export type Lesson = LessonRecord;

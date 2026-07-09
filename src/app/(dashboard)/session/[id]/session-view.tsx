@@ -1,25 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-
-type ReadingWord = {
-    word: string;
-    phonetic: string;
-    meaning: string;
-    tier: "core" | "reinforce" | "next";
-    explanation: string;
-};
-
-type Lesson = {
-    title: string;
-    prompt: string;
-    keywords: string;
-    length: "Short" | "Medium" | "Long";
-    level: "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
-    article: string;
-    word_count: number;
-    vocabulary: ReadingWord[];
-};
+import type { Lesson, ReadingWord } from "@/src/features/lessons/types/lesson";
 
 export default function SessionView({
     lesson,
@@ -57,7 +39,6 @@ export default function SessionView({
 
                 <section className="grid gap-6 lg:grid-cols-[minmax(0,1.7fr)_minmax(320px,0.9fr)]">
                     <article className="rounded-[2rem] border border-[color:var(--app-border)] bg-[color:var(--app-surface)] p-6 leading-8 shadow-[0_20px_60px_rgba(15,23,42,0.08)] h-[60vh] overflow-y-auto">
-                        <h2 className="mb-4 text-xl font-semibold">Reading passage</h2>
                         <p className="text-[1.05rem] text-[color:var(--app-text)]">
                             {articleWords.map((part, index) => {
                                 const normalized = part.replace(/[.,!?;:()]/g, "");

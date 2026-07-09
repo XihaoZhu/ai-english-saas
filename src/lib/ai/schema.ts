@@ -19,10 +19,5 @@ export const LessonSchema = z.object({
     vocabulary: z.array(ReadingWordSchema),
 });
 
-export type ReadingWord = z.infer<
-    typeof ReadingWordSchema
->;
-
-export type GeneratedLesson = z.infer<
-    typeof LessonSchema
->;
+export type ReadingWord = z.infer<typeof ReadingWordSchema>;
+export type GeneratedLesson = z.infer<typeof LessonSchema>;

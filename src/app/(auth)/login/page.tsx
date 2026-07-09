@@ -21,7 +21,7 @@ export default function LoginPage() {
     try {
       await login.mutateAsync(data);
       router.push("/dashboard");
-    } catch (e) {
+    } catch {
     }
   }
 
@@ -92,7 +92,7 @@ export default function LoginPage() {
             </button>
           </form>
           <p className="text-sm opacity-70">
-            Don't have an account?
+            Don&apos;t have an account?
             <Link
               href="/register"
               className="ml-1 underline"

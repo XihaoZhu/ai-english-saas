@@ -1,22 +1,21 @@
 "use server";
 
 import { createClient } from "@/src/lib/supabase/server-client";
+import type {
+    LessonLevel,
+    LessonLength,
+    ReadingWord,
+} from "@/src/features/lessons/types/lesson";
 
 export async function createLesson(input: {
     title: string;
     prompt: string;
     keywords: string;
-    length: "Short" | "Medium" | "Long";
-    level: "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
+    length: LessonLength;
+    level: LessonLevel;
     article: string;
     word_count: number;
-    vocabulary: Array<{
-        word: string;
-        phonetic: string;
-        meaning: string;
-        tier: string;
-        explanation: string;
-    }>;
+    vocabulary: ReadingWord[];
 }) {
     const supabase = await createClient();
 
