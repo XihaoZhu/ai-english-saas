@@ -12,6 +12,8 @@ import {
 import { createLesson } from "@/src/features/lessons/actions/createLesson";
 import { useGenerateLesson } from "@/src/features/learning/hooks/useGenerateLesson";
 
+import LoadingDots from "@/src/components/ui/LoadingDots";
+
 export default function LearnPage() {
   const router = useRouter();
 
@@ -46,6 +48,40 @@ export default function LearnPage() {
 
   return (
     <main className=" bg-[color:var(--app-bg)] text-[color:var(--app-text)] p-6">
+
+      {mutation.isPending && (
+        <div
+          className="
+      fixed
+      inset-0
+      z-50
+      flex
+      items-center
+      justify-center
+      bg-black/30
+      backdrop-blur-sm
+    "
+        >
+          <div
+            className="
+        rounded-3xl
+        bg-[color:var(--app-surface)]
+        p-8
+        shadow-xl
+      "
+          >
+            <div className="text-xl font-semibold">
+              Creating your lesson
+              <LoadingDots />
+            </div>
+
+            <p className="mt-2 text-sm opacity-70">
+              AI is preparing your reading material
+            </p>
+          </div>
+        </div>
+      )}
+
       <div className="mx-auto max-w-3xl">
         <h1 className="mb-2 text-4xl font-bold">Create Reading Material</h1>
 

@@ -1,5 +1,6 @@
 import { getLessons } from "@/src/features/lessons/api/getLessons";
 import Link from "next/link";
+import DeleteLessonButton from "./DeleteLessonButton";
 
 const PAGE_SIZE = 5;
 
@@ -34,6 +35,11 @@ export default async function HistoryPage({
         </section>
 
         <section className="space-y-4">
+          {lessons.length === 0 && (
+            <div className="rounded-[1.5rem] border border-dashed border-[color:var(--app-border)] bg-[color:var(--app-surface)] px-6 py-10 text-center text-sm text-[color:var(--app-muted)]">
+              No reading history yet.
+            </div>
+          )}
           {lessons.map((lesson) => (
             <div
               key={lesson.id}
@@ -54,12 +60,21 @@ export default async function HistoryPage({
                   </p>
                 </div>
 
-                <Link
-                  href={`/session/${lesson.id}`}
-                  className="inline-flex h-11 items-center rounded-xl border border-[color:var(--app-border)] bg-[color:var(--app-bg-elevated)] px-5 text-sm font-medium transition hover:border-[color:var(--app-accent)] hover:text-[color:var(--app-accent)]"
-                >
-                  Review Passage
-                </Link>
+                <div className="flex flex-col gap-3 sm:flex-row md:shrink-0">
+                  <Link
+                    href={`/session/${lesson.id}`}
+                    className="inline-flex h-11 items-center justify-center rounded-xl border border-[color:var(--app-border)] bg-[color:var(--app-bg-elevated)] px-5 text-sm font-medium transition hover:border-[color:var(--app-accent)] hover:text-[color:var(--app-accent)]"
+                  >
+                    Review Passage
+                  </Link>
+
+                  <DeleteLessonButton
+                    lessonId={lesson.id}
+                    lessonTitle={lesson.title}
+                    currentPage={safePage}
+                    itemsOnPage={lessons.length}
+                  />
+                </div>
               </div>
             </div>
           ))}
