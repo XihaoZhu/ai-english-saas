@@ -30,7 +30,7 @@ export default async function DashboardPage() {
             <div className="space-y-3">
               <h2 className="text-2xl font-semibold">Start a new reading session</h2>
               <p className="max-w-xl text-[color:var(--app-muted)]">
-                Generate a reading passage by prompt, keyword focus, word count, and CEFR level.
+                Generate a reading passage by prompt, length, and CEFR level.
               </p>
             </div>
             <Link
@@ -60,21 +60,20 @@ export default async function DashboardPage() {
           ) : (
             <div className="grid gap-4 md:grid-cols-2">
               {recentSessions.map((session) => (
-                <div
+                <Link
                   key={session.id}
+                  href={`/session/${session.id}`}
                   className="rounded-2xl border border-[color:var(--app-border)] bg-[color:var(--app-surface)] p-5 transition hover:-translate-y-0.5 hover:shadow-lg"
                 >
                   <div className="space-y-2">
                     <h3 className="text-lg font-semibold">{session.title}</h3>
                     <div className="flex items-center gap-3 text-sm text-[color:var(--app-muted)]">
                       <span>{session.level}</span>
-                      <span>路</span>
                       <span>{session.length}</span>
-                      <span>路</span>
                       <span>{formatDate(session.created_at)}</span>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           )}
