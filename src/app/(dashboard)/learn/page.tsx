@@ -86,7 +86,7 @@ export default function LearnPage() {
         <h1 className="mb-2 text-4xl font-bold">Create Reading Material</h1>
 
         <p className="mb-8 opacity-70">
-          Generate a reading passage from your prompt, keyword focus, length, and CEFR level.
+          Generate a reading passage from your prompt, additional information, length, and CEFR level.
         </p>
 
         <form
@@ -98,7 +98,7 @@ export default function LearnPage() {
 
             <input
               {...form.register("prompt")}
-              placeholder="e.g. How to make a good coffee"
+              placeholder="e.g. How to make a good latte with a semi-automatic coffee machine"
               autoComplete="off"
               className="w-full rounded-xl border border-[color:var(--app-border)] bg-transparent px-4 py-3"
             />
@@ -115,7 +115,7 @@ export default function LearnPage() {
 
             <input
               {...form.register("keywords")}
-              placeholder="e.g. breakdown guidance, I have a semi-automatic coffee machine"
+              placeholder="e.g. breakdown guidance, step-by-step instructions, common mistakes"
               autoComplete="off"
               className="w-full rounded-xl border border-[color:var(--app-border)] bg-transparent px-4 py-3"
             />

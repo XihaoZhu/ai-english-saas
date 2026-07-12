@@ -1,28 +1,16 @@
-"use client";
-
 import Link from "next/link";
 import ThemeToggle from "@/src/components/ui/ThemeToggle";
+import { getLessons } from "@/src/features/lessons/api/getLessons";
 
-export default function DashboardPage() {
-  const recentSessions = [
-    {
-      id: 1,
-      title: "Job Interview Warm-up",
-      level: "B2",
-      length: "Medium",
-      date: "2026-05-20",
-    },
-    {
-      id: 2,
-      title: "Restaurant Habits",
-      level: "A2",
-      length: "Short",
-      date: "2026-05-18",
-    },
-  ];
+function formatDate(dateValue: string) {
+  return new Date(dateValue).toISOString().slice(0, 10);
+}
+
+export default async function DashboardPage() {
+  const { lessons: recentSessions } = await getLessons(1, 2);
 
   return (
-    <main className=" bg-[color:var(--app-bg)] px-6 py-8 text-[color:var(--app-text)]">
+    <main className="bg-[color:var(--app-bg)] px-6 py-8 text-[color:var(--app-text)]">
       <div className="mx-auto max-w-6xl space-y-8">
         <section className="flex flex-col gap-4 rounded-[2rem] border border-[color:var(--app-border)] bg-[color:var(--app-surface)] p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)] backdrop-blur md:flex-row md:items-start md:justify-between">
           <div className="space-y-3">
@@ -65,25 +53,31 @@ export default function DashboardPage() {
             </Link>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            {recentSessions.map((session) => (
-              <div
-                key={session.id}
-                className="rounded-2xl border border-[color:var(--app-border)] bg-[color:var(--app-surface)] p-5 transition hover:-translate-y-0.5 hover:shadow-lg"
-              >
-                <div className="space-y-2">
-                  <h3 className="text-lg font-semibold">{session.title}</h3>
-                  <div className="flex items-center gap-3 text-sm text-[color:var(--app-muted)]">
-                    <span>{session.level}</span>
-                    <span>·</span>
-                    <span>{session.length}</span>
-                    <span>·</span>
-                    <span>{session.date}</span>
+          {recentSessions.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-[color:var(--app-border)] bg-[color:var(--app-surface)] p-6 text-sm text-[color:var(--app-muted)]">
+              No sessions yet. Start one from the learning page.
+            </div>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2">
+              {recentSessions.map((session) => (
+                <div
+                  key={session.id}
+                  className="rounded-2xl border border-[color:var(--app-border)] bg-[color:var(--app-surface)] p-5 transition hover:-translate-y-0.5 hover:shadow-lg"
+                >
+                  <div className="space-y-2">
+                    <h3 className="text-lg font-semibold">{session.title}</h3>
+                    <div className="flex items-center gap-3 text-sm text-[color:var(--app-muted)]">
+                      <span>{session.level}</span>
+                      <span>路</span>
+                      <span>{session.length}</span>
+                      <span>路</span>
+                      <span>{formatDate(session.created_at)}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </section>
       </div>
     </main>

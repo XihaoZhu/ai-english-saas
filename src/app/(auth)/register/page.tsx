@@ -11,6 +11,8 @@ import {
 
 import { useRegister } from "@/src/features/auth/hooks/useRegister";
 
+import { verifyInviteCode } from "@/src/features/auth/actions/verifyInviteCode";
+
 import Link from "next/link";
 
 export default function RegisterPage() {
@@ -22,6 +24,16 @@ export default function RegisterPage() {
   });
 
   async function onSubmit(data: RegisterForm) {
+
+    const invited = await verifyInviteCode(data.inviteCode);
+
+    if (!invited) {
+      form.setError("inviteCode", {
+        message: "Invalid invite code",
+      });
+      return;
+    }
+
     try {
       await register.mutateAsync(data);
       router.push("/dashboard");
@@ -39,13 +51,12 @@ export default function RegisterPage() {
           <div className="hidden lg:flex flex-col justify-between p-10">
             <div>
               <div className="mb-6 text-4xl font-bold">
-                SpeakFlow
+                ReadFlow
               </div>
 
               <p className="max-w-sm text-lg opacity-70">
                 Improve your English through
-                AI-powered conversation practice,
-                personalized lessons and progress tracking.
+                AI-powered passage reading.
               </p>
             </div>
 
@@ -80,6 +91,16 @@ export default function RegisterPage() {
             />
             <p className="text-red-500 text-sm">
               {form.formState.errors.password?.message}
+            </p>
+
+            <input
+              type="inviteCode"
+              placeholder="Invite Code"
+              {...form.register("inviteCode")}
+              className="w-full border border-[color:var(--app-border)] p-3 rounded"
+            />
+            <p className="text-red-500 text-sm">
+              {form.formState.errors.inviteCode?.message}
             </p>
 
             {register.isError && (
