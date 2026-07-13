@@ -35,13 +35,12 @@ export default function LoginPage() {
           <div className="hidden lg:flex flex-col justify-between p-10">
             <div>
               <div className="mb-6 text-4xl font-bold">
-                SpeakFlow
+                ReadFlow
               </div>
 
               <p className="max-w-sm text-lg opacity-70">
                 Improve your English through
-                AI-powered conversation practice,
-                personalized lessons and progress tracking.
+                AI-powered passage reading.
               </p>
             </div>
 
