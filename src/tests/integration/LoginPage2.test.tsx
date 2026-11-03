@@ -27,7 +27,7 @@ const createQueryClient = () => {
     });
 }
 
-vi.mock("@/src/features/auth/api/signin.ts", () => ({
+vi.mock("@/src/features/auth/api/signIn.ts", () => ({
     signIn: mockSignIn
 }));
 
