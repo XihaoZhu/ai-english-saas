@@ -1,4 +1,7 @@
 name: Read Flow CI
+env:
+  NEXT_PUBLIC_SUPABASE_URL: https://uiygcayglkglltxfpfzg.supabase.co
+  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_w52wPhWduvnshR8QvGNn5w_EoTTuC1A
 
 on:
   push:
