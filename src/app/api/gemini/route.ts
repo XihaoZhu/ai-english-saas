@@ -7,6 +7,7 @@ import { LessonDraftInputSchema } from "@/src/features/lessons/schemas/lesson";
 
 export async function POST(request: Request) {
 
+    const requestId = crypto.randomUUID();
 
     try {
         let input: unknown
@@ -42,11 +43,14 @@ export async function POST(request: Request) {
 
     } catch (error) {
 
-        console.error(error);
+        let errorType = error instanceof Error ? error.name : "UnknownError";
+
+        console.error(`${requestId}| POST /api/gemini | Lesson generation failed | ${errorType}`)
 
         return NextResponse.json(
             {
                 error: "Something went wrong, please try again later.",
+                requestId,
             },
             {
                 status: 500,

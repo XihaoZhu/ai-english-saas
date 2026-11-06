@@ -1,6 +1,6 @@
 import { POST } from "@/src/app/api/gemini/route";
 import type { GeneratedLessonResult, LessonDraftInput } from "@/src/features/lessons/types/lesson";
-import { vi, describe, it, expect, beforeEach } from "vitest";
+import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 
 
 const { generateLesson } = vi.hoisted(() => ({
@@ -44,6 +44,10 @@ describe("POST /api/gemini", () => {
         vi.resetAllMocks();
     });
 
+    afterEach(() => {
+        vi.restoreAllMocks();
+    })
+
 
     it("should return a 200 status code when success", async () => {
 
@@ -70,6 +74,9 @@ describe("POST /api/gemini", () => {
 
         expect(await response.json()).toEqual({
             error: "Something went wrong, please try again later.",
+            requestId: expect.stringMatching(
+                /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+            ),
         });
 
         expect(generateLesson).toBeCalledWith(input);
@@ -85,6 +92,9 @@ describe("POST /api/gemini", () => {
 
         expect(await response.json()).toEqual({
             error: "Something went wrong, please try again later.",
+            requestId: expect.stringMatching(
+                /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+            ),
         });
 
         expect(generateLesson).toHaveBeenCalledWith(input);
@@ -130,6 +140,27 @@ describe("POST /api/gemini", () => {
         expect(response.status).toBe(400);
 
         expect(generateLesson).not.toHaveBeenCalled();
+    })
+
+    it('should return correct requestId in the error response when an error occurs', async () => {
+
+        vi.spyOn(crypto, 'randomUUID').mockReturnValue('test-request-id');
+
+        const consoleSpy = vi
+            .spyOn(console, "error")
+            .mockImplementation(() => { });
+
+        generateLesson.mockRejectedValue(new Error('Test error'));
+
+        const response = await POST(createRequest());
+
+        expect(await response.json()).toEqual({
+            error: "Something went wrong, please try again later.",
+            requestId: 'test-request-id',
+        });
+
+        expect(consoleSpy.mock.calls[0][0]).toContain('test-request-id');
+
     })
 
 })
