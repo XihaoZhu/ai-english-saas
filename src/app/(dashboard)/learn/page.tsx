@@ -13,6 +13,8 @@ import { createLesson } from "@/src/features/lessons/actions/createLesson";
 import { useGenerateLesson } from "@/src/features/learning/hooks/useGenerateLesson";
 
 import LoadingDots from "@/src/components/ui/LoadingDots";
+import { useState } from "react";
+import { GeneratedLessonResult } from "@/src/features/lessons/types/lesson";
 
 export default function LearnPage() {
   const router = useRouter();
@@ -29,8 +31,14 @@ export default function LearnPage() {
     },
   });
 
+  const [tempSaveLesson, setTempSaveLesson] = useState<GeneratedLessonResult | null>(null);
+
   async function onGenerate(data: LessonForm) {
     const lesson = await mutation.mutateAsync(data);
+
+    setTempSaveLesson(lesson)
+
+
 
     const saved = await createLesson({
       title: lesson.title,
@@ -49,7 +57,7 @@ export default function LearnPage() {
   return (
     <main className=" bg-[color:var(--app-bg)] text-[color:var(--app-text)] p-6">
 
-      {mutation.isPending && (
+      {(mutation.isPending || form.formState.isSubmitting) && (
         <div
           className="
       fixed
@@ -152,7 +160,7 @@ export default function LearnPage() {
 
           <button
             type="submit"
-            disabled={mutation.isPending}
+            disabled={form.formState.isSubmitting || mutation.isPending}
             className="h-12 w-full rounded-xl bg-[color:var(--app-text)] text-[color:var(--app-bg)]"
           >
             {mutation.isPending

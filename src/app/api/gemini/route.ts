@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 
-import { generateLesson } from "@/src/lib/ai/gemini";
+import { generateLesson, LessonTimeoutError } from "@/src/lib/ai/gemini";
 
 import { LessonDraftInputSchema } from "@/src/features/lessons/schemas/lesson";
+
 
 
 export async function POST(request: Request) {
@@ -46,6 +47,15 @@ export async function POST(request: Request) {
         let errorType = error instanceof Error ? error.name : "UnknownError";
 
         console.error(`${requestId}| POST /api/gemini | Lesson generation failed | ${errorType}`)
+
+        if (error instanceof LessonTimeoutError) {
+            return NextResponse.json({
+                error: "Lesson generation timed out after 20 seconds. Please try again.",
+                requestId,
+            }, {
+                status: 504,
+            })
+        }
 
         return NextResponse.json(
             {

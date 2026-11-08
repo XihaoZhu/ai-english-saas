@@ -1,5 +1,6 @@
 import { POST } from "@/src/app/api/gemini/route";
 import type { GeneratedLessonResult, LessonDraftInput } from "@/src/features/lessons/types/lesson";
+import { LessonTimeoutError } from "@/src/lib/ai/gemini";
 import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 
 
@@ -7,9 +8,16 @@ const { generateLesson } = vi.hoisted(() => ({
     generateLesson: vi.fn(),
 }));
 
-vi.mock("@/src/lib/ai/gemini", () => ({
-    generateLesson: generateLesson
-}));
+vi.mock("@/src/lib/ai/gemini", async (importOriginal) => {
+    const actual = await importOriginal<
+        typeof import("@/src/lib/ai/gemini")
+    >();
+
+    return {
+        ...actual,
+        generateLesson,
+    };
+});
 
 
 const input = {
@@ -160,6 +168,23 @@ describe("POST /api/gemini", () => {
         });
 
         expect(consoleSpy.mock.calls[0][0]).toContain('test-request-id');
+
+    })
+
+    it("should return 504 when a LessonTimeoutError occurs", async () => {
+
+        generateLesson.mockRejectedValue(new LessonTimeoutError());
+
+        const response = await POST(createRequest());
+
+        expect(response.status).toBe(504);
+
+        expect(await response.json()).toEqual({
+            error: "Lesson generation timed out after 20 seconds. Please try again.",
+            requestId: expect.stringMatching(
+                /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+            ),
+        });
 
     })
 
