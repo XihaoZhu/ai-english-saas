@@ -33,25 +33,62 @@ export default function LearnPage() {
 
   const [tempSaveLesson, setTempSaveLesson] = useState<GeneratedLessonResult | null>(null);
 
+  const [saveError, setSaveError] = useState<string | null>(null);
+
+  const [isSaving, setIsSaving] = useState(false);
+
   async function onGenerate(data: LessonForm) {
+
+    setSaveError(null);
+    setTempSaveLesson(null);
+
     const lesson = await mutation.mutateAsync(data);
 
-    setTempSaveLesson(lesson)
+    setTempSaveLesson(lesson);
+
+    try {
+      const saved = await createLesson({
+        title: lesson.title,
+        prompt: lesson.prompt,
+        keywords: lesson.keywords,
+        length: lesson.length,
+        level: lesson.level,
+        article: lesson.article,
+        word_count: lesson.word_count,
+        vocabulary: lesson.vocabulary,
+      });
+
+      router.push(`/session/${saved.id}`);
+    } catch (error) {
+      setSaveError("Failed to save the lesson. Please try again.");
+    }
 
 
+  }
 
-    const saved = await createLesson({
-      title: lesson.title,
-      prompt: lesson.prompt,
-      keywords: lesson.keywords,
-      length: lesson.length,
-      level: lesson.level,
-      article: lesson.article,
-      word_count: lesson.word_count,
-      vocabulary: lesson.vocabulary,
-    });
+  const retrySave = async () => {
 
-    router.push(`/session/${saved.id}`);
+    if (tempSaveLesson == null || isSaving) return;
+
+    setIsSaving(true);
+
+    try {
+      const saved = await createLesson({
+        title: tempSaveLesson.title,
+        prompt: tempSaveLesson.prompt,
+        keywords: tempSaveLesson.keywords,
+        length: tempSaveLesson.length,
+        level: tempSaveLesson.level,
+        article: tempSaveLesson.article,
+        word_count: tempSaveLesson.word_count,
+        vocabulary: tempSaveLesson.vocabulary,
+      });
+
+      router.push(`/session/${saved.id}`);
+    } catch (error) {
+      setSaveError("Failed to save the lesson. Please try again.");
+      setIsSaving(false);
+    }
   }
 
   return (
@@ -158,7 +195,7 @@ export default function LearnPage() {
             </select>
           </div>
 
-          <button
+          {!saveError && <button
             type="submit"
             disabled={form.formState.isSubmitting || mutation.isPending}
             className="h-12 w-full rounded-xl bg-[color:var(--app-text)] text-[color:var(--app-bg)]"
@@ -166,11 +203,24 @@ export default function LearnPage() {
             {mutation.isPending
               ? "Generating..."
               : "Generate Lesson"}
-          </button>
+          </button>}
+          {saveError && <button
+            type="button"
+            className="h-12 w-full rounded-xl bg-[color:var(--app-text)] text-[color:var(--app-bg)]"
+            onClick={retrySave}
+            disabled={isSaving}
+          >
+            {isSaving ? "Saving..." : "Retry Saving Lesson"}
+          </button>}
 
           {mutation.isError && (
             <p className="text-red-500">
               {(mutation.error as Error).message}
+            </p>
+          )}
+          {saveError && (
+            <p className="text-red-500">
+              {saveError}
             </p>
           )}
         </form>
