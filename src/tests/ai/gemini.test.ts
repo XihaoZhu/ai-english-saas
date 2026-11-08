@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { generateLesson } from "@/src/lib/ai/gemini";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { generateLesson, LessonTimeoutError } from "@/src/lib/ai/gemini";
 import type { LessonDraftInput } from "@/src/features/lessons/types/lesson";
 
 // Mock Google GenAI SDK
@@ -20,6 +20,11 @@ describe("generateLesson", () => {
     beforeEach(() => {
         vi.resetAllMocks();
     });
+
+    afterEach(() => {
+        vi.useRealTimers()
+        vi.restoreAllMocks();
+    })
 
     const input = {
         prompt: "Write a lesson about sample words.",
@@ -85,5 +90,32 @@ describe("generateLesson", () => {
             .rejects.toThrow("API call failed");
     });
 
-});
+    it("should abort Gemini request after 20 seconds", async () => {
+        vi.useFakeTimers();
 
+
+        mockGenerateContent.mockImplementation(() => {
+            return new Promise(() => { })
+        })
+
+        const generatePromise = generateLesson(input)
+
+        const abortSignal = mockGenerateContent.mock.calls[0][0].config.abortSignal;
+
+        expect(abortSignal.aborted).toBe(false);
+
+        const rejectionAssertion = expect(generatePromise)
+            .rejects.toThrow(LessonTimeoutError);
+
+        vi.advanceTimersByTime(20000);
+
+        expect(abortSignal.aborted).toBe(true);
+        expect(abortSignal.reason).toBeInstanceOf(LessonTimeoutError);
+
+        await rejectionAssertion;
+
+    });
+
+
+
+});

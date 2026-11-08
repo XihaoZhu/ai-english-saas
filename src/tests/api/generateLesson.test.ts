@@ -89,4 +89,5 @@ describe("API client", () => {
         expect(mockFetch).toHaveBeenCalledOnce();
 
     });
+
 })

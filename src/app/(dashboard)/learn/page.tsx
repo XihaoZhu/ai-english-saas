@@ -13,6 +13,8 @@ import { createLesson } from "@/src/features/lessons/actions/createLesson";
 import { useGenerateLesson } from "@/src/features/learning/hooks/useGenerateLesson";
 
 import LoadingDots from "@/src/components/ui/LoadingDots";
+import { useState } from "react";
+import { GeneratedLessonResult } from "@/src/features/lessons/types/lesson";
 
 export default function LearnPage() {
   const router = useRouter();
@@ -29,27 +31,70 @@ export default function LearnPage() {
     },
   });
 
+  const [tempSaveLesson, setTempSaveLesson] = useState<GeneratedLessonResult | null>(null);
+
+  const [saveError, setSaveError] = useState<string | null>(null);
+
+  const [isSaving, setIsSaving] = useState(false);
+
   async function onGenerate(data: LessonForm) {
+
+    setSaveError(null);
+    setTempSaveLesson(null);
+
     const lesson = await mutation.mutateAsync(data);
 
-    const saved = await createLesson({
-      title: lesson.title,
-      prompt: lesson.prompt,
-      keywords: lesson.keywords,
-      length: lesson.length,
-      level: lesson.level,
-      article: lesson.article,
-      word_count: lesson.word_count,
-      vocabulary: lesson.vocabulary,
-    });
+    setTempSaveLesson(lesson);
 
-    router.push(`/session/${saved.id}`);
+    try {
+      const saved = await createLesson({
+        title: lesson.title,
+        prompt: lesson.prompt,
+        keywords: lesson.keywords,
+        length: lesson.length,
+        level: lesson.level,
+        article: lesson.article,
+        word_count: lesson.word_count,
+        vocabulary: lesson.vocabulary,
+      });
+
+      router.push(`/session/${saved.id}`);
+    } catch (error) {
+      setSaveError("Failed to save the lesson. Please try again.");
+    }
+
+
+  }
+
+  const retrySave = async () => {
+
+    if (tempSaveLesson == null || isSaving) return;
+
+    setIsSaving(true);
+
+    try {
+      const saved = await createLesson({
+        title: tempSaveLesson.title,
+        prompt: tempSaveLesson.prompt,
+        keywords: tempSaveLesson.keywords,
+        length: tempSaveLesson.length,
+        level: tempSaveLesson.level,
+        article: tempSaveLesson.article,
+        word_count: tempSaveLesson.word_count,
+        vocabulary: tempSaveLesson.vocabulary,
+      });
+
+      router.push(`/session/${saved.id}`);
+    } catch (error) {
+      setSaveError("Failed to save the lesson. Please try again.");
+      setIsSaving(false);
+    }
   }
 
   return (
     <main className=" bg-[color:var(--app-bg)] text-[color:var(--app-text)] p-6">
 
-      {mutation.isPending && (
+      {(mutation.isPending || form.formState.isSubmitting) && (
         <div
           className="
       fixed
@@ -150,19 +195,32 @@ export default function LearnPage() {
             </select>
           </div>
 
-          <button
+          {!saveError && <button
             type="submit"
-            disabled={mutation.isPending}
+            disabled={form.formState.isSubmitting || mutation.isPending}
             className="h-12 w-full rounded-xl bg-[color:var(--app-text)] text-[color:var(--app-bg)]"
           >
             {mutation.isPending
               ? "Generating..."
               : "Generate Lesson"}
-          </button>
+          </button>}
+          {saveError && <button
+            type="button"
+            className="h-12 w-full rounded-xl bg-[color:var(--app-text)] text-[color:var(--app-bg)]"
+            onClick={retrySave}
+            disabled={isSaving}
+          >
+            {isSaving ? "Saving..." : "Retry Saving Lesson"}
+          </button>}
 
           {mutation.isError && (
             <p className="text-red-500">
               {(mutation.error as Error).message}
+            </p>
+          )}
+          {saveError && (
+            <p className="text-red-500">
+              {saveError}
             </p>
           )}
         </form>

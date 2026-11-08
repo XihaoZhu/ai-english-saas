@@ -4,5 +4,6 @@ import { generateLesson } from "@/src/features/learning/api/generateLesson";
 export function useGenerateLesson() {
     return useMutation({
         mutationFn: generateLesson,
+        retry: false,
     });
 }
