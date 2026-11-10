@@ -4,8 +4,9 @@ import { LessonTimeoutError } from "@/src/lib/ai/gemini";
 import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 
 
-const { generateLesson } = vi.hoisted(() => ({
+const { generateLesson, createClient } = vi.hoisted(() => ({
     generateLesson: vi.fn(),
+    createClient: vi.fn(),
 }));
 
 vi.mock("@/src/lib/ai/gemini", async (importOriginal) => {
@@ -18,6 +19,11 @@ vi.mock("@/src/lib/ai/gemini", async (importOriginal) => {
         generateLesson,
     };
 });
+
+vi.mock("@/src/lib/supabase/server-client", () => {
+    return { createClient }
+})
+
 
 
 const input = {
@@ -50,6 +56,18 @@ describe("POST /api/gemini", () => {
 
     beforeEach(() => {
         vi.resetAllMocks();
+        createClient.mockResolvedValue({
+            auth: {
+                getUser: vi.fn().mockResolvedValue({
+                    data: {
+                        user: {
+                            id: "test-user-id",
+                        },
+                    },
+                    error: null
+                })
+            }
+        })
     });
 
     afterEach(() => {
@@ -186,6 +204,79 @@ describe("POST /api/gemini", () => {
             ),
         });
 
+    })
+
+    it("should return 401 when user is null and gemini won't be called", async () => {
+        createClient.mockResolvedValue({
+            auth: {
+                getUser: vi.fn().mockResolvedValue({
+                    data: {
+                        user: null,
+                    },
+                    error: null
+                })
+            }
+        })
+
+        const response = await POST(createRequest());
+
+        expect(response.status).toBe(401);
+
+        expect(await response.json()).toEqual({
+            error: "Unauthorized",
+        });
+
+        expect(generateLesson).not.toHaveBeenCalled();
+
+    })
+
+    it("should return 500 when getUser throws an error", async () => {
+        createClient.mockResolvedValue({
+            auth: {
+                getUser: vi.fn().mockRejectedValue(new SyntaxError("Failed to authenticate user")),
+            }
+        })
+
+        vi.spyOn(console, 'error').mockImplementation(() => { });
+
+        const response = await POST(createRequest());
+
+        expect(response.status).toBe(500);
+
+        expect(await response.json()).toEqual({
+            error: "Failed to authenticate user",
+        });
+
+        expect(console.error).toHaveBeenCalledWith(expect.stringContaining("Failed to authenticate user"));
+        expect(console.error).toHaveBeenCalledWith(expect.stringContaining("SyntaxError"));
+
+        expect(generateLesson).not.toHaveBeenCalled();
+    })
+
+    it("should return 500 when user is null and error status from supabase client is 500", async () => {
+        createClient.mockResolvedValue({
+            auth: {
+                getUser: vi.fn().mockResolvedValue({
+                    data: {
+                        user: null,
+                    },
+                    error: {
+                        status: 500,
+                        message: "Internal Server Error",
+                    }
+                })
+            }
+        })
+
+        const response = await POST(createRequest());
+
+        expect(response.status).toBe(500);
+
+        expect(await response.json()).toEqual({
+            error: "Failed to authenticate user",
+        });
+
+        expect(generateLesson).not.toHaveBeenCalled();
     })
 
 })
